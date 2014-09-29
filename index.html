@@ -10,6 +10,7 @@
     <title>San Francisco Graffitis</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="style.css">
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,300' rel='stylesheet' type='text/css'>
     <script type="text/javascript" src="jquery.js"></script>
 
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
@@ -22,7 +23,7 @@
   <body>
       <!-- begin template -->
 <div class="navbar navbar-custom navbar-fixed-top">
- <div class="navbar-header"><a class="navbar-brand" href="#">San Francisco Graffiti</a>
+ <div class="navbar-header"><a class="navbar-brand" href="index.html">San Francisco Graffiti</a>
       <a class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
@@ -32,7 +33,7 @@
     <div class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li class="active"><a href="index.html">Home</a></li>
-        <li class="active"><a href="#">Help</a></li>
+        <li class="active"><a href="#" data-toggle="modal" data-target="#helpModal">Help</a></li>
         <li>&nbsp;</li>
       </ul>
       <!-- <form class="navbar-form">
@@ -50,12 +51,12 @@
 
 <div class="container-fluid" id="main">
   <div class="row">
-    <div class="col-xs-6" id="left">
+    <div class="col-xs-5" id="left">
 
       <div id="pic-panorama"></div>
 
     </div>
-    <div class="col-xs-6"><!--map-canvas will be postioned here--></div>
+    <div class="col-xs-7"><!--map-canvas will be postioned here--></div>
 
   </div>
 </div> <!-- End of container -->
@@ -67,8 +68,32 @@
           </div>
       </div>
 
+  <div class="modal fade" id="helpModal" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h2 class="modal-title" id="myModalLabel">Help</h2>
+            </div>
+            <div class="modal-body">
+                <h4>Follow these instructions: </h4>
+                <ul>
+                  <li> Each cluster <img src="cluster.png"> represents a group of markers. Click on it to zoom in and show all the markers inside of it.</li>
+                  <li>Each marker <img src="museum_art_2.png"> represents a location where a graffiti was spotted.</li>
+                  <li>To see the information related to the graffiti at a location, just click on the associated marker.</li>
+                  <li>Click and hold it in order to drag the map.</li>
+                  <li>Click home or hit "F5" to refresh the page.</li>
+                </ul>
+
+            </div>
+            <div class="modal-footer">
+        </div>
+    </div>
+  </div>
+</div>
+
     <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?"></script>
-    <!-- Latest compiled and minified JavaScript -->
+    <script type="text/javascript" src="infobox.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="markerclusterer.js"></script>
     <script type="text/javascript" src="script.js"></script>

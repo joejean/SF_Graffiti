@@ -1,8 +1,6 @@
-//Array of graffitis
-var graffitiList = [];
-var markerList = [];
+//Array that holds the current infoWindow
 var currentInfoWindow = [];
-
+var markerList = [];
 
 //function that initialize the map
 function initializeMap() {
@@ -14,9 +12,10 @@ function initializeMap() {
     disableDefaultUI: false,
     scrollwheel: true,
     draggable: true,
-    maxZoom: 30,
+    maxZoom: 60,
     minZoom:9,
     zoomControl: true,
+    mapTypeControl: false,
     panControl: true,
     streetViewControl: false,
 
@@ -55,7 +54,6 @@ function closeInfoWindows(){
 }
 
 //Creat marker and add it to the map
-//lat: 37.791350, lng: -122.4312883
 function createMarker(mapReference, latitude, longitude, icon_url){
 
   var marker = new google.maps.Marker({
@@ -70,23 +68,48 @@ return marker;
 
 }
 
-function createInfoWindow(windowContent){
 
-  var infoWindow = new google.maps.InfoWindow({
-    content: windowContent
-  });
+//Function that creates an info Window using the infobox.js constructor
+function createInfoWindow(options){
+
+  var infoWindow = new InfoBox(options);
   return infoWindow;
 }
 
 
-//create a marker and show it
+// Create an info window and attach it to a  marker on the map.
 function showInfoWindow(map, graffiti, marker){
-   var infoWindow = createInfoWindow(graffiti.type);
+
+  var type = graffiti.type || "Graffiti";
+  var address = graffiti.address;
+  var picture = (!graffiti.media_url) ? "NA" : "<a href="+graffiti.media_url.url+
+  " target='_blank' title='Click to open the picture of the graffiti' >Link to picture</a>";
+  var status = graffiti.status;
+  var content = "<strong>"+type+"</strong><br><br>"+"<strong>Address: </strong>"+address+"<br><strong>Status: </strong>"+
+  status+"<br><strong>Picture: </strong>"+ picture;
+   var infoboxOptions = {
+      content: content
+      ,disableAutoPan: false
+      ,maxWidth: 0
+      ,pixelOffset: new google.maps.Size(-10, 0)
+      ,zIndex: null
+      ,boxClass: "myInfobox"
+      ,closeBoxMargin: "2px"
+      ,closeBoxURL: "close_icon.png"
+      ,infoBoxClearance: new google.maps.Size(1, 1)
+      ,visible: true
+      ,pane: "floatPane"
+      ,enableEventPropagation: false
+
+};
+   var infoWindow = createInfoWindow(infoboxOptions);
    infoWindow.open(map, marker);//open the infoWindow
+   //add the freshly created info window to the currentInfoWindow table in order to be able to close it later.
+   currentInfoWindow[0]= infoWindow;
 }
 
 
-
+//create the StreetView Panorama
 function createPanorama(lat, long, map){
 
   var panoElement = $('#pic-panorama')[0];
@@ -105,7 +128,7 @@ $(document).ready(function(){
 var mapObject = initializeMap();
 
 //Call the graffiti dataset API. Create a marker for each open graffiti, put it on the map and also
-//put it in the list of markers. Then put the graffiti in the graffiti list
+
   $.ajax({
 
                 url: "http://data.sfgov.org/resource/p6sg-7yp7.json",
@@ -116,17 +139,25 @@ var mapObject = initializeMap();
                   console.log('SUCCESS');
 
                   $.each(data, function(index, graffiti){
-                    if (graffiti.status=="Open"){
-                      marker = createMarker(mapObject, Number(graffiti.position.latitude),Number(graffiti.position.longitude), 'museum_art_2.png');
+
+                      var latitude = Number(graffiti.position.latitude);
+                      var longitude = Number(graffiti.position.longitude);
+                      var marker = createMarker(mapObject, latitude, longitude, 'museum_art_2.png');
+
+                      markerList.push(marker);
+                     //This line makes sure that the infowindows get shown on their respective markers when clicked.
+                      mapObject.setCenter(marker.getPosition());
                       google.maps.event.addListener(marker,'click', function(e){
 
+                        //close the info window that is currently open.
+                        closeInfoWindows();
+
                         showInfoWindow(mapObject, graffiti, marker);
-                        createPanorama(Number(graffiti.position.latitude), Number(graffiti.position.longitude), mapObject);
+                        createPanorama(latitude, longitude, mapObject);
 
                       });
-                      markerList.push(marker);
-                      graffitiList.push(graffiti);
-                    }
+
+
                   });
 
                 },
@@ -142,7 +173,7 @@ var mapObject = initializeMap();
 
 //When the Ajax call is complete
 $(document).ajaxComplete(function(){
-   console.log(graffitiList.length);
+   //for testing purposes
    console.log(markerList.length);
 
   //add marker cluster
