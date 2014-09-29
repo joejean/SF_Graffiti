@@ -1,6 +1,7 @@
 //Array of graffitis
 var graffitiList = [];
 var markerList = [];
+var currentInfoWindow = [];
 
 
 //function that initialize the map
@@ -9,7 +10,7 @@ function initializeMap() {
   //map options
   var options = {
     center: {lat:37.7749295 , lng:-122.419415500000010000 },
-    zoom: 12,
+    zoom: 13,
     disableDefaultUI: false,
     scrollwheel: true,
     draggable: true,
@@ -17,6 +18,7 @@ function initializeMap() {
     minZoom:9,
     zoomControl: true,
     panControl: true,
+    streetViewControl: false,
 
     zoomControlOptions: {
       position: google.maps.ControlPosition.LEFT_BOTTOM,
@@ -37,6 +39,21 @@ function initializeMap() {
 
 }
 
+//function to close the previous info windows whenever the user clicks on
+//a new marker
+function closeInfoWindows(){
+
+  if (currentInfoWindow.length > 0){
+    //detach the info window from it's current marker
+    currentInfoWindow[0].set("marker", null);
+    //close it
+    currentInfoWindow[0].close();
+    //blank the array
+    currentInfoWindow.length = 0;
+  }
+
+}
+
 //Creat marker and add it to the map
 //lat: 37.791350, lng: -122.4312883
 function createMarker(mapReference, latitude, longitude, icon_url){
@@ -44,7 +61,8 @@ function createMarker(mapReference, latitude, longitude, icon_url){
   var marker = new google.maps.Marker({
     position: { lat: latitude, lng: longitude },
     map: mapReference,
-    icon:icon_url
+    icon:icon_url,
+    title: 'Click here to see info about the graffiti in this location'
   });
 
 return marker;
@@ -52,12 +70,12 @@ return marker;
 
 }
 
-function createInfoWindow(info){
-  var self = this;
-  this.infoWindow = new google.maps.InfoWindow({
-    content: info
+function createInfoWindow(windowContent){
+
+  var infoWindow = new google.maps.InfoWindow({
+    content: windowContent
   });
-  return this.infoWindow;
+  return infoWindow;
 }
 
 
@@ -67,9 +85,7 @@ function showInfoWindow(map, graffiti, marker){
    infoWindow.open(map, marker);//open the infoWindow
 }
 
-function showStreetView(){
 
-}
 
 function createPanorama(lat, long, map){
 
