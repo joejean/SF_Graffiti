@@ -1,6 +1,9 @@
 //Array that holds the current infoWindow
 var currentInfoWindow = [];
 var markerList = [];
+var closed_icon = "museum_art_1.png";
+var open_icon ="museum_art_2.png";
+
 
 //function that initialize the map
 function initializeMap() {
@@ -141,7 +144,12 @@ var mapObject = initializeMap();
 
                       var latitude = Number(graffiti.position.latitude);
                       var longitude = Number(graffiti.position.longitude);
-                      var marker = createMarker(mapObject, latitude, longitude, 'museum_art_2.png');
+                      if(graffiti.status=="Closed"){
+                        var marker = createMarker(mapObject, latitude, longitude, closed_icon);
+                      }
+                      else{
+                        var marker = createMarker(mapObject, latitude, longitude, open_icon);
+                      }
 
                       markerList.push(marker);
                      //This line makes sure that the infowindows get shown on their respective markers when clicked.
